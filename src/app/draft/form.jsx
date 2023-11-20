@@ -11,12 +11,13 @@ export default function DraftForm(props) {
     const { isOpenModal, onCancel, id } = props
     const [form] = Form.useForm();
     const pathname = usePathname()
-    const [data, setData] = useState()
     const [isConfirmModalOpen, setIsOpenConfirmModal] = useState(false)
     const [isSuccess, setIsSuccess] = useState(false)
     const [idPost, setIdPost] = useState()
+    const [error, setError] = useState("")
 
     const router = useRouter()
+
 
     const postData = async (values) => {
         try {
@@ -37,22 +38,30 @@ export default function DraftForm(props) {
                 })
             return response
         } catch (error) {
+            setError('Please try again.');
 
         }
     }
+
 
     const handleSaveAndclose = async () => {
         const values = await form.validateFields();
         const response = await postData(values);
         if (response?.ok) {
+        setError();
             if (pathname === '/' && !id) {
                 router.push('/draft')
             } else {
                 onCancel(response?.ok)
                 form.resetFields()
             }
+        }else{
+        setError('Please try again.');
         }
+
     }
+
+
 
 
     const handleSave = async () => {
@@ -62,6 +71,10 @@ export default function DraftForm(props) {
         if (response?.ok) {
             setIdPost(data?.id)
             setIsSuccess(true)
+            setError()
+        }else{
+        setError('Please try again.');
+
         }
     }
 
@@ -77,7 +90,7 @@ export default function DraftForm(props) {
                 });
 
             } catch (error) {
-                console.error('Error fetching data:', error);
+                setError('Please try again.');
             }
         };
 
@@ -103,6 +116,10 @@ export default function DraftForm(props) {
                 form.resetFields()
             }
             setIsSuccess(false)
+            setError()
+        }else{
+        setError(' Please try again.');
+
         }
     }
     const onDelete = () => {
@@ -120,9 +137,13 @@ export default function DraftForm(props) {
             if (response?.ok) {
                 onCancel()
                 form.resetFields()
+                setError()
+            }else{
+                setError(' Please try again.');
             }
             setIsOpenConfirmModal(false)
         } catch (error) {
+            setError(' Please try again.');
 
         }
     }
@@ -130,14 +151,19 @@ export default function DraftForm(props) {
         <Modal
             title={id ? "Edit Post" : "New Post"}
             open={isOpenModal}
-            onCancel={() => {
-                onCancel()
+            onCancel={async() => {
+                setError("")
+                setIsSuccess(false)
                 form.resetFields()
+                onCancel()
+               
             }}
             footer={[
                 <div className='flex gap-2 justify-end'>
                     <Button onClick={() => {
                         onCancel()
+                        setError("")
+                        setIsSuccess(false)
                         form.resetFields()
                     }}>
                         cancel
@@ -171,6 +197,8 @@ export default function DraftForm(props) {
                     disabled={!isSuccess}
                 />
             </Form>
+            {error && <div className='text-[#ef4c4c]'>{error}</div> }
+
             <ConfirmModal
                 // onCancel={onCancelConfirm}
                 onConfirm={onConfirm}

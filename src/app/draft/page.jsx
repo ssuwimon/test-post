@@ -1,11 +1,8 @@
 'use client'
 import React, { useEffect, useState } from 'react'
 import ListPost from '../components/listPost';
-// import Button from '../components/button';
 import DraftForm from './form';
 import ConfirmModal from '../components/confirmModal';
-import WrapperHeader from '../components/header';
-import SearchBar from '../components/search';
 import { Button } from 'antd';
 
 export default function DraftPage() {
@@ -13,8 +10,9 @@ export default function DraftPage() {
   const [isModalOpen, setIsOpenModal] = useState(false)
   const [isConfirmModalOpen, setIsOpenConfirmModal] = useState(false)
   const [id, setId] = useState()
-  const [isSuccess, setIsSuccess] = useState()
-  const [search, setSearch] = useState()
+  const [idDelete, setIdDelete] = useState()
+  const [isSuccess, setIsSuccess] = useState(false)
+  const [error, setError] = useState("")
 
   const handleOpen = () => {
     setIsOpenModal(true)
@@ -35,10 +33,10 @@ export default function DraftPage() {
       try {
         const res = await fetch('https://post-api.opensource-technology.com/api/posts/draft');
         const fetchedData = await res.json();
-          setData(fetchedData?.posts);
+        setData(fetchedData?.posts);
         setIsSuccess(false)
-        
       } catch (error) {
+        setError('Please try again.');
       }
     };
     fetchData()
@@ -51,23 +49,29 @@ export default function DraftPage() {
 
   const onDelete = (id) => {
     setIsOpenConfirmModal(true)
-    setId(id)
+    setIdDelete(id)
   }
 
   const onConfirm = async () => {
     try {
-      const response = await fetch(`https://post-api.opensource-technology.com/api/posts/${id}`, {
+      const response = await fetch(`https://post-api.opensource-technology.com/api/posts/${idDelete}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
         },
       })
+
       if (response?.ok) {
         setIsSuccess(response?.ok)
+        setError('')
+      } else {
+        setIsSuccess(false)
+        setError(' Please try again.');
       }
       setIsOpenConfirmModal(false)
-    } catch (error) {
 
+    } catch (error) {
+      setError('Please try again.');
     }
   }
 
@@ -84,34 +88,38 @@ export default function DraftPage() {
         body: JSON.stringify(req),
       })
 
-      if(res?.ok){
+      if (res?.ok) {
         onCancel()
+        setError()
+      } else {
+        setError('Please try again.');
       }
-      
-    } catch (error) {
 
+    } catch (error) {
+      setError('Please try again.');
     }
   }
   return (
     <div className='flex flex-col items-center w-[100%]'>
-    <div className='flex justify-end  w-[80%]  mb-2'>
-      <Button onClick={handleOpen}>
+      <div className='flex justify-end  w-[80%]  mb-2'>
+        <Button onClick={handleOpen}>
           create draft
         </Button>
-        </div>
-     <div className='flex flex-col items-center w-[100%]'>
+      </div>
+      <div className='flex flex-col items-center w-[100%]'>
+        {error && <div className='text-[#ef4c4c]'>{error}</div>}
 
-      {
-        data && data?.map((item) => {
-          return <ListPost {...item}
-           draft 
-           onEdit={onEdit}
-            onDelete={onDelete} 
-            onPublish={onPublish}
+        {
+          data && data?.map((item) => {
+            return <ListPost {...item}
+              draft
+              onEdit={onEdit}
+              onDelete={onDelete}
+              onPublish={onPublish}
             />
-        })
-      }
-    </div>
+          })
+        }
+      </div>
 
       <DraftForm
         id={id}
@@ -125,6 +133,5 @@ export default function DraftPage() {
         title="ยืนยันที่จะลบ Draft นี้ ? "
         open={isConfirmModalOpen} />
     </div>
-
   )
 }

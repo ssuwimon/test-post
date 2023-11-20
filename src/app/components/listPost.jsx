@@ -8,7 +8,8 @@ export default function ListPost(props) {
     props.onEdit(id)
   }
 
-  return <div className={`border-2 border-[#e9e9e9] my-2 rounded-lg p-6 w-[80%]`}>
+  return (
+    <div className={`border-2 border-[#e9e9e9] my-2 rounded-lg p-6 w-[80%]`}>
     <div className='flex justify-between items-center font-bold '>
       {title}
       <div className='flex gap-2 '>
@@ -30,4 +31,5 @@ export default function ListPost(props) {
       </div>
     </Tag>
   </div>
+  )
 }
