@@ -20,12 +20,12 @@ export default function Home(props) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = search ? await fetch(`https://post-api.opensource-technology.com/api/posts?term=${search}`, {
+        const res =  await fetch(`https://post-api.opensource-technology.com/api/posts?page=${data?.page}&limit=${data?.limit}${search && `&term=${search}`}`,{
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
           },
-        }) : await fetch(`https://post-api.opensource-technology.com/api/posts?page=${data?.page}&limit=${data?.limit}`);
+        });
         const fetchedData = await res.json();
         setData({
           data: fetchedData?.posts,

@@ -160,6 +160,7 @@ export default function DraftForm(props) {
                 <FormItem
                     name="content"
                     label="content"
+                    required
                     textArea />
                 <p></p>
                 <FormItem

@@ -3,7 +3,7 @@ import Link from 'next/link'
 import React from 'react'
 import { usePathname } from 'next/navigation'
 
-export default function WrapperHeader() {
+export default function Header() {
   const pathname = usePathname()
   return (
     <div className='m-auto  w-[80%] py-4 font-semibold'>
