@@ -8,7 +8,7 @@ export default function SearchBar(props) {
       <Input 
       value={value}
       onChange={onChange}
-      placeholder='search'
+      placeholder='title'
       prefix={<IoSearchOutline/>}
       />
     </div>

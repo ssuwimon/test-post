@@ -12,12 +12,11 @@ export default function FormItem(props) {
       rules={[
         {
           required: required ? true : false,
-          message: (
-            <div></div>
-          )
+          message: `Please input ${label}`
         }
       ]}
     >
+      
       {
         type ?
           <Button
@@ -26,11 +25,12 @@ export default function FormItem(props) {
             Publish now
           </Button>
           : textArea ? <TextArea
+            placeholder={label}
             autoSize={{
               minRows: 3,
               maxRows: 5,
             }}
-          /> : <Input />
+          /> : <Input placeholder={label} />
       }
     </Form.Item>
   )
